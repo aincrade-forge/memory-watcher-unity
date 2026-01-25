@@ -1,6 +1,6 @@
 # Memory Watcher (iOS) — Unity UPM Package
 
-Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop updates. Designed for multi-project reuse via UPM (git or local path).
+Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.
 
 
 ## Features
@@ -11,9 +11,7 @@ Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop upd
 
 ## Install (UPM)
 
-### Git URL (recommended)
-1. Tag this repository (e.g., `v0.4.0`).
-2. In your Unity project `Packages/manifest.json`, add:
+Add this to your `Packages/manifest.json`:
 
 ```json
 {
@@ -22,18 +20,6 @@ Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop upd
   }
 }
 ```
-
-### Local path (development)
-In `Packages/manifest.json`:
-
-```json
-{
-  "dependencies": {
-    "com.aincrade.memory-watcher": "file:/ABSOLUTE/PATH/TO/memory-watcher-unity"
-  }
-}
-```
-
 No files are required under `Assets/` — this is a UPM package.
 
 ## Initialization
@@ -111,4 +97,4 @@ md.SetSampleInterval(0.25f); // adjust sampling rate
 
 ## License
 
-MIT (see `LICENSE`).
+MIT (see [LICENSE](LICENSE)).
