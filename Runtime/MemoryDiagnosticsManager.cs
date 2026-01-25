@@ -46,6 +46,8 @@ namespace MemoryDiagnostics
             #elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
             private const string DLL = "__Internal";
             [DllImport(DLL)] public static extern long MD_GetMemoryFootprintBytes();
+            #elif UNITY_STANDALONE_WIN && !UNITY_EDITOR
+            public static long MD_GetMemoryFootprintBytes() => WindowsMemoryReader.GetWorkingSetBytes();
             #else
             public static long MD_GetMemoryFootprintBytes() => 0L;
             #endif
@@ -102,6 +104,48 @@ namespace MemoryDiagnostics
                 }
                 _getPssMethod = IntPtr.Zero;
                 _initialized = false;
+            }
+        }
+        #endif
+
+        #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        private static class WindowsMemoryReader
+        {
+            [StructLayout(LayoutKind.Sequential)]
+            private struct PROCESS_MEMORY_COUNTERS
+            {
+                public uint cb;
+                public uint PageFaultCount;
+                public ulong PeakWorkingSetSize;
+                public ulong WorkingSetSize;
+                public ulong QuotaPeakPagedPoolUsage;
+                public ulong QuotaPagedPoolUsage;
+                public ulong QuotaPeakNonPagedPoolUsage;
+                public ulong QuotaNonPagedPoolUsage;
+                public ulong PagefileUsage;
+                public ulong PeakPagefileUsage;
+            }
+
+            [DllImport("kernel32.dll")]
+            private static extern IntPtr GetCurrentProcess();
+
+            [DllImport("psapi.dll", SetLastError = true)]
+            private static extern bool GetProcessMemoryInfo(IntPtr hProcess, out PROCESS_MEMORY_COUNTERS counters, uint size);
+
+            public static long GetWorkingSetBytes()
+            {
+                try
+                {
+                    var process = GetCurrentProcess();
+                    if (process == IntPtr.Zero) return 0L;
+                    var counters = new PROCESS_MEMORY_COUNTERS { cb = (uint)Marshal.SizeOf<PROCESS_MEMORY_COUNTERS>() };
+                    if (!GetProcessMemoryInfo(process, out counters, counters.cb)) return 0L;
+                    return (long)counters.WorkingSetSize;
+                }
+                catch
+                {
+                    return 0L;
+                }
             }
         }
         #endif
