@@ -91,6 +91,11 @@ md.SetSampleInterval(0.25f); // adjust sampling rate
 - Windows: `GetProcessMemoryInfo(...).WorkingSetSize`.
 - Peak tracked locally per sample in managed code.
 
+### macOS native source
+
+- Source lives in `Native/macOS/MemoryDiagnostics.mm`
+- Build script: `Scripts/build_macos.sh`
+
 ## Performance Notes
 
 - Exactly one native call per sampling tick (`MD_GetMemoryFootprintBytes`).
