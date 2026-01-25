@@ -1,11 +1,11 @@
-# Memory Watcher (iOS) — Unity UPM Package
+# Memory Watcher — Unity UPM Package
 
-Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.
+Unity iOS/Android memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.
 
 
 ## Features
 
-- Current and peak memory footprint (phys_footprint with resident fallback)
+- Current and peak memory footprint (platform-appropriate source)
 - Main-thread sampling via PlayerLoop (no GameObject)
 - Minimal per-sample overhead (single native call per tick)
 
@@ -83,10 +83,10 @@ md.SetSampleInterval(0.25f); // adjust sampling rate
 - `MemoryDiagnosticsManager.SetSampleInterval(seconds)`
 - `MemoryDiagnosticsManager.OnSample(MemoryDiagSnapshot)`
 
-## iOS Details
+## Platform Details
 
-- Minimum iOS: 10.0
-- Native footprint via `task_info(..., TASK_VM_INFO)` → `phys_footprint`; fallback to resident size.
+- iOS: `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
+- Android: `android.os.Debug.getPss()` (KB) converted to bytes.
 - Peak tracked locally per sample in managed code.
 
 ## Performance Notes

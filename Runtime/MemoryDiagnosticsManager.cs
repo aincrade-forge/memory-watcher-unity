@@ -41,10 +41,67 @@ namespace MemoryDiagnostics
             #if UNITY_IOS && !UNITY_EDITOR
             private const string DLL = "__Internal";
             [DllImport(DLL)] public static extern long MD_GetMemoryFootprintBytes();
+            #elif UNITY_ANDROID && !UNITY_EDITOR
+            public static long MD_GetMemoryFootprintBytes() => AndroidMemoryReader.GetPssBytes();
             #else
             public static long MD_GetMemoryFootprintBytes() => 0L;
             #endif
         }
+
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        private static class AndroidMemoryReader
+        {
+            private static bool _initialized;
+            private static IntPtr _debugClass;
+            private static IntPtr _getPssMethod;
+            private static readonly jvalue[] _emptyArgs = new jvalue[0];
+
+            private static void EnsureInitialized()
+            {
+                if (_initialized) return;
+                try
+                {
+                    var localClass = AndroidJNI.FindClass("android/os/Debug");
+                    _debugClass = AndroidJNI.NewGlobalRef(localClass);
+                    AndroidJNI.DeleteLocalRef(localClass);
+                    _getPssMethod = AndroidJNI.GetStaticMethodID(_debugClass, "getPss", "()J");
+                }
+                catch
+                {
+                    _debugClass = IntPtr.Zero;
+                    _getPssMethod = IntPtr.Zero;
+                }
+                _initialized = true;
+            }
+
+            public static long GetPssBytes()
+            {
+                EnsureInitialized();
+                if (_debugClass == IntPtr.Zero || _getPssMethod == IntPtr.Zero) return 0L;
+                try
+                {
+                    long pssKb = AndroidJNI.CallStaticLongMethod(_debugClass, _getPssMethod, _emptyArgs);
+                    if (pssKb < 0) return 0L;
+                    return pssKb * 1024L;
+                }
+                catch
+                {
+                    return 0L;
+                }
+            }
+
+            public static void Shutdown()
+            {
+                if (_debugClass != IntPtr.Zero)
+                {
+                    AndroidJNI.DeleteGlobalRef(_debugClass);
+                    _debugClass = IntPtr.Zero;
+                }
+                _getPssMethod = IntPtr.Zero;
+                _initialized = false;
+            }
+        }
+        #endif
 
         public long CurrentFootprintBytes { get; private set; }
         public long PeakFootprintBytes { get; private set; }
@@ -122,6 +179,9 @@ namespace MemoryDiagnostics
         public static void Shutdown()
         {
             RemovePlayerLoop();
+            #if UNITY_ANDROID && !UNITY_EDITOR
+            AndroidMemoryReader.Shutdown();
+            #endif
         }
 
         private static void TickStatic()
