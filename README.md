@@ -16,7 +16,7 @@ Add this to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.4.0"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.5.0"
   }
 }
 ```
