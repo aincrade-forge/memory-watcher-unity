@@ -32,8 +32,8 @@ Call `MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 1.0f)` from you
 
 ## Properties (read-only)
 
-- `CurrentFootprintBytes`, `PeakFootprintBytes`
-- `CurrentFootprintMB`, `PeakFootprintMB`
+- `CurrentMemoryBytes`, `PeakMemoryBytes`
+- `CurrentMemoryMB`, `PeakMemoryMB`
 - `LatestSnapshot`
 
 ## Usage Example
@@ -59,7 +59,7 @@ public class MemDiagExample : MonoBehaviour
 
     void OnSample(MemoryDiagSnapshot s)
     {
-        Debug.Log($"Current: {s.currentFootprintMB:F1} MB, Peak: {s.peakFootprintMB:F1} MB");
+        Debug.Log($"Current: {s.currentMemoryMB:F1} MB, Peak: {s.peakMemoryMB:F1} MB");
         // Send telemetry, update UI, etc.
     }
 

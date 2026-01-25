@@ -10,21 +10,21 @@ namespace MemoryDiagnostics
 {
     public readonly struct MemoryDiagSnapshot
     {
-        public readonly long currentFootprintBytes;
-        public readonly long peakFootprintBytes;
-        public readonly float currentFootprintMB;
-        public readonly float peakFootprintMB;
+        public readonly long currentMemoryBytes;
+        public readonly long peakMemoryBytes;
+        public readonly float currentMemoryMB;
+        public readonly float peakMemoryMB;
 
         public MemoryDiagSnapshot(
-            long currentFootprintBytes,
-            long peakFootprintBytes,
-            float currentFootprintMB,
-            float peakFootprintMB)
+            long currentMemoryBytes,
+            long peakMemoryBytes,
+            float currentMemoryMB,
+            float peakMemoryMB)
         {
-            this.currentFootprintBytes = currentFootprintBytes;
-            this.peakFootprintBytes = peakFootprintBytes;
-            this.currentFootprintMB = currentFootprintMB;
-            this.peakFootprintMB = peakFootprintMB;
+            this.currentMemoryBytes = currentMemoryBytes;
+            this.peakMemoryBytes = peakMemoryBytes;
+            this.currentMemoryMB = currentMemoryMB;
+            this.peakMemoryMB = peakMemoryMB;
         }
     }
 
@@ -150,10 +150,10 @@ namespace MemoryDiagnostics
         }
         #endif
 
-        public long CurrentFootprintBytes { get; private set; }
-        public long PeakFootprintBytes { get; private set; }
-        public float CurrentFootprintMB { get; private set; }
-        public float PeakFootprintMB { get; private set; }
+        public long CurrentMemoryBytes { get; private set; }
+        public long PeakMemoryBytes { get; private set; }
+        public float CurrentMemoryMB { get; private set; }
+        public float PeakMemoryMB { get; private set; }
         public MemoryDiagSnapshot LatestSnapshot { get; private set; }
 
         public event Action<MemoryDiagSnapshot> OnSample;
@@ -177,12 +177,12 @@ namespace MemoryDiagnostics
             }
             catch { currentBytes = 0; }
 
-            CurrentFootprintBytes = currentBytes;
-            if (currentBytes > PeakFootprintBytes) PeakFootprintBytes = currentBytes; // track peak locally
-            CurrentFootprintMB = BytesToMB(CurrentFootprintBytes);
-            PeakFootprintMB = BytesToMB(PeakFootprintBytes);
+            CurrentMemoryBytes = currentBytes;
+            if (currentBytes > PeakMemoryBytes) PeakMemoryBytes = currentBytes; // track peak locally
+            CurrentMemoryMB = BytesToMB(CurrentMemoryBytes);
+            PeakMemoryMB = BytesToMB(PeakMemoryBytes);
 
-            var snap = BuildSnapshot(CurrentFootprintBytes, CurrentFootprintMB, PeakFootprintBytes);
+            var snap = BuildSnapshot(CurrentMemoryBytes, CurrentMemoryMB, PeakMemoryBytes);
             LatestSnapshot = snap;
 
             SafeInvokeEvent(OnSample, snap);
