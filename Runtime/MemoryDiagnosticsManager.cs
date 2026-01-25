@@ -1,7 +1,6 @@
 // File: Runtime/MemoryDiagnosticsManager.cs
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.LowLevel;
@@ -45,7 +44,8 @@ namespace MemoryDiagnostics
             #elif UNITY_ANDROID && !UNITY_EDITOR
             public static long MD_GetMemoryFootprintBytes() => AndroidMemoryReader.GetPssBytes();
             #elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
-            public static long MD_GetMemoryFootprintBytes() => MacMemoryReader.GetWorkingSetBytes();
+            private const string DLL = "__Internal";
+            [DllImport(DLL)] public static extern long MD_GetMemoryFootprintBytes();
             #else
             public static long MD_GetMemoryFootprintBytes() => 0L;
             #endif
@@ -101,51 +101,6 @@ namespace MemoryDiagnostics
                     _debugClass = IntPtr.Zero;
                 }
                 _getPssMethod = IntPtr.Zero;
-                _initialized = false;
-            }
-        }
-        #endif
-
-        #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
-        private static class MacMemoryReader
-        {
-            private static bool _initialized;
-            private static Process _self;
-
-            private static void EnsureInitialized()
-            {
-                if (_initialized) return;
-                try
-                {
-                    _self = Process.GetCurrentProcess();
-                }
-                catch
-                {
-                    _self = null;
-                }
-                _initialized = true;
-            }
-
-            public static long GetWorkingSetBytes()
-            {
-                EnsureInitialized();
-                try
-                {
-                    return _self != null ? _self.WorkingSet64 : 0L;
-                }
-                catch
-                {
-                    return 0L;
-                }
-            }
-
-            public static void Shutdown()
-            {
-                if (_self != null)
-                {
-                    try { _self.Dispose(); } catch { }
-                    _self = null;
-                }
                 _initialized = false;
             }
         }
@@ -229,9 +184,6 @@ namespace MemoryDiagnostics
             RemovePlayerLoop();
             #if UNITY_ANDROID && !UNITY_EDITOR
             AndroidMemoryReader.Shutdown();
-            #endif
-            #if UNITY_STANDALONE_OSX && !UNITY_EDITOR
-            MacMemoryReader.Shutdown();
             #endif
         }
 
