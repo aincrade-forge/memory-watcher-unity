@@ -1,0 +1,15 @@
+{
+  "name": "com.aincrade.memory-watcher",
+  "displayName": "Aincrade Memory Watcher (iOS)",
+  "version": "0.4.0",
+  "unity": "2019.4",
+  "description": "Unity iOS memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.",
+  "keywords": ["memory", "footprint", "ios", "unity", "telemetry"],
+  "category": "Diagnostics",
+  "license": "MIT",
+  "author": {
+    "name": "Aincrade",
+    "email": "",
+    "url": ""
+  }
+}
