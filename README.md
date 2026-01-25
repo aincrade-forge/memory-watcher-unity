@@ -16,7 +16,7 @@ Add this to your `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.6.0"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.6.1"
   }
 }
 ```
@@ -87,7 +87,7 @@ md.SetSampleInterval(0.25f); // adjust sampling rate
 
 - iOS: `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
 - Android: `android.os.Debug.getPss()` (KB) converted to bytes.
-- macOS: `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
+- macOS: native plugin (`libMemoryDiagnostics.dylib`) uses `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
 - Windows: `GetProcessMemoryInfo(...).WorkingSetSize`.
 - Peak tracked locally per sample in managed code.
 

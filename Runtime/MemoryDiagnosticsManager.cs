@@ -44,7 +44,7 @@ namespace MemoryDiagnostics
             #elif UNITY_ANDROID && !UNITY_EDITOR
             public static long MD_GetMemoryFootprintBytes() => AndroidMemoryReader.GetPssBytes();
             #elif UNITY_STANDALONE_OSX && !UNITY_EDITOR
-            private const string DLL = "__Internal";
+            private const string DLL = "MemoryDiagnostics";
             [DllImport(DLL)] public static extern long MD_GetMemoryFootprintBytes();
             #elif UNITY_STANDALONE_WIN && !UNITY_EDITOR
             public static long MD_GetMemoryFootprintBytes() => WindowsMemoryReader.GetWorkingSetBytes();
@@ -58,7 +58,8 @@ namespace MemoryDiagnostics
         {
             private static bool _initialized;
             private static IntPtr _debugClass;
-            private static IntPtr _getPssMethod;
+            private static IntPtr _getPssMethodLong;
+            private static IntPtr _getPssMethodInt;
             private static readonly jvalue[] _emptyArgs = new jvalue[0];
 
             private static void EnsureInitialized()
@@ -69,12 +70,17 @@ namespace MemoryDiagnostics
                     var localClass = AndroidJNI.FindClass("android/os/Debug");
                     _debugClass = AndroidJNI.NewGlobalRef(localClass);
                     AndroidJNI.DeleteLocalRef(localClass);
-                    _getPssMethod = AndroidJNI.GetStaticMethodID(_debugClass, "getPss", "()J");
+                    try { _getPssMethodLong = AndroidJNI.GetStaticMethodID(_debugClass, "getPss", "()J"); } catch { _getPssMethodLong = IntPtr.Zero; }
+                    if (_getPssMethodLong == IntPtr.Zero)
+                    {
+                        try { _getPssMethodInt = AndroidJNI.GetStaticMethodID(_debugClass, "getPss", "()I"); } catch { _getPssMethodInt = IntPtr.Zero; }
+                    }
                 }
                 catch
                 {
                     _debugClass = IntPtr.Zero;
-                    _getPssMethod = IntPtr.Zero;
+                    _getPssMethodLong = IntPtr.Zero;
+                    _getPssMethodInt = IntPtr.Zero;
                 }
                 _initialized = true;
             }
@@ -82,12 +88,22 @@ namespace MemoryDiagnostics
             public static long GetPssBytes()
             {
                 EnsureInitialized();
-                if (_debugClass == IntPtr.Zero || _getPssMethod == IntPtr.Zero) return 0L;
+                if (_debugClass == IntPtr.Zero) return 0L;
                 try
                 {
-                    long pssKb = AndroidJNI.CallStaticLongMethod(_debugClass, _getPssMethod, _emptyArgs);
-                    if (pssKb < 0) return 0L;
-                    return pssKb * 1024L;
+                    if (_getPssMethodLong != IntPtr.Zero)
+                    {
+                        long pssKb = AndroidJNI.CallStaticLongMethod(_debugClass, _getPssMethodLong, _emptyArgs);
+                        if (pssKb < 0) return 0L;
+                        return pssKb * 1024L;
+                    }
+                    if (_getPssMethodInt != IntPtr.Zero)
+                    {
+                        int pssKb = AndroidJNI.CallStaticIntMethod(_debugClass, _getPssMethodInt, _emptyArgs);
+                        if (pssKb < 0) return 0L;
+                        return (long)pssKb * 1024L;
+                    }
+                    return 0L;
                 }
                 catch
                 {
@@ -102,7 +118,8 @@ namespace MemoryDiagnostics
                     AndroidJNI.DeleteGlobalRef(_debugClass);
                     _debugClass = IntPtr.Zero;
                 }
-                _getPssMethod = IntPtr.Zero;
+                _getPssMethodLong = IntPtr.Zero;
+                _getPssMethodInt = IntPtr.Zero;
                 _initialized = false;
             }
         }
@@ -111,6 +128,8 @@ namespace MemoryDiagnostics
         #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
         private static class WindowsMemoryReader
         {
+            private static readonly uint CountersSize = (uint)Marshal.SizeOf<PROCESS_MEMORY_COUNTERS>();
+
             [StructLayout(LayoutKind.Sequential)]
             private struct PROCESS_MEMORY_COUNTERS
             {
@@ -138,7 +157,7 @@ namespace MemoryDiagnostics
                 {
                     var process = GetCurrentProcess();
                     if (process == IntPtr.Zero) return 0L;
-                    var counters = new PROCESS_MEMORY_COUNTERS { cb = (uint)Marshal.SizeOf<PROCESS_MEMORY_COUNTERS>() };
+                    var counters = new PROCESS_MEMORY_COUNTERS { cb = CountersSize };
                     if (!GetProcessMemoryInfo(process, out counters, counters.cb)) return 0L;
                     return (long)counters.WorkingSetSize;
                 }
