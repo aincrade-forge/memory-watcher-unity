@@ -257,8 +257,12 @@ namespace MemoryDiagnostics
 
         private static void InstallPlayerLoop()
         {
-            if (_playerLoopInstalled) return;
             var root = PlayerLoop.GetCurrentPlayerLoop();
+            if (ContainsSystem(root, typeof(PlayerLoopHook)))
+            {
+                _playerLoopInstalled = true;
+                return;
+            }
             var hookSystem = new PlayerLoopSystem
             {
                 type = typeof(PlayerLoopHook),
@@ -322,6 +326,17 @@ namespace MemoryDiagnostics
             {
                 system.subSystemList = list.ToArray();
                 return true;
+            }
+            return false;
+        }
+
+        private static bool ContainsSystem(PlayerLoopSystem system, Type targetType)
+        {
+            if (system.type == targetType) return true;
+            if (system.subSystemList == null) return false;
+            for (int i = 0; i < system.subSystemList.Length; i++)
+            {
+                if (ContainsSystem(system.subSystemList[i], targetType)) return true;
             }
             return false;
         }

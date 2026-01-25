@@ -12,5 +12,5 @@ if ! command -v clang++ >/dev/null 2>&1; then
 fi
 
 mkdir -p "$OUT_DIR"
-clang++ -dynamiclib -o "$OUT_LIB" "$SRC" -install_name @rpath/libMemoryDiagnostics.dylib
+clang++ -dynamiclib -arch arm64 -arch x86_64 -o "$OUT_LIB" "$SRC" -install_name @rpath/libMemoryDiagnostics.dylib
 echo "Built: $OUT_LIB"

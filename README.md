@@ -95,6 +95,7 @@ md.SetSampleInterval(0.25f); // adjust sampling rate
 
 - Source lives in `Native/macOS/MemoryDiagnostics.mm`
 - Build script: `Scripts/build_macos.sh`
+- The build script outputs a universal dylib (arm64 + x86_64).
 
 ## Performance Notes
 
