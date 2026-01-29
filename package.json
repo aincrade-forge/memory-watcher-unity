@@ -1,7 +1,7 @@
 {
   "name": "com.aincrade.memory-watcher",
   "displayName": "Memory Watcher",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "unity": "2019.4",
   "description": "Unity iOS/Android/macOS/Windows memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.",
   "keywords": ["memory", "footprint", "ios", "android", "macos", "windows", "unity", "telemetry"],
