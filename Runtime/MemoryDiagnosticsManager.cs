@@ -1,5 +1,3 @@
-// File: Runtime/MemoryDiagnosticsManager.cs
-
 using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -197,7 +195,7 @@ namespace MemoryDiagnostics
             catch { currentBytes = 0; }
 
             CurrentMemoryBytes = currentBytes;
-            if (currentBytes > PeakMemoryBytes) PeakMemoryBytes = currentBytes; // track peak locally
+            if (currentBytes > PeakMemoryBytes) PeakMemoryBytes = currentBytes;
             CurrentMemoryMB = BytesToMB(CurrentMemoryBytes);
             PeakMemoryMB = BytesToMB(PeakMemoryBytes);
 

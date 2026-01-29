@@ -1,107 +1,62 @@
 # Memory Watcher — Unity UPM Package
 
-Unity iOS/Android/macOS/Windows memory footprint sampler with peak tracking and zero-GC PlayerLoop updates.
+Memory footprint telemetry for Unity (iOS, Android, macOS, Windows). Sampling runs on the main thread via the PlayerLoop with peak tracking.
 
+## Install
 
-## Features
-
-- Current and peak memory footprint (platform-appropriate source)
-- Main-thread sampling via PlayerLoop (no GameObject)
-- Minimal per-sample overhead (single native call per tick)
-
-## Install (UPM)
-
-Add this to your `Packages/manifest.json`:
+Add to `Packages/manifest.json`:
 
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.6.5"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.6.6"
   }
 }
 ```
-No files are required under `Assets/` — this is a UPM package.
 
-## Initialization
-
-Call `MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 1.0f)` from your code (e.g., in a small BeforeSceneLoad initializer). No GameObject placement required.
-
-## Events (main thread)
-
-- `OnSample(MemoryDiagSnapshot)`
-
-## Properties (read-only)
-
-- `CurrentMemoryBytes`, `PeakMemoryBytes`
-- `CurrentMemoryMB`, `PeakMemoryMB`
-- `LatestSnapshot`
-
-## Usage Example
+## Usage
 
 ```csharp
 using MemoryDiagnostics;
-using UnityEngine;
 
-public class MemDiagExample : MonoBehaviour
+MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 1.0f);
+MemoryDiagnosticsManager.Instance.OnSample += s =>
 {
-    void OnEnable()
-    {
-        var md = MemoryDiagnosticsManager.Initialize();
-        md.OnSample += OnSample;
-    }
+    // s.currentMemoryMB / s.peakMemoryMB
+};
 
-    void OnDisable()
-    {
-        var md = MemoryDiagnosticsManager.Instance;
-        if (md == null) return;
-        md.OnSample -= OnSample;
-    }
-
-    void OnSample(MemoryDiagSnapshot s)
-    {
-        Debug.Log($"Current: {s.currentMemoryMB:F1} MB, Peak: {s.peakMemoryMB:F1} MB");
-        // Send telemetry, update UI, etc.
-    }
-
-}
+// Optional overlay (safe‑area aware)
+MemoryDiagnosticsOverlay.Show();
 ```
 
 ## Configuration
 
 ```csharp
-using MemoryDiagnostics;
-
 MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 0.5f);
-
-var md = MemoryDiagnosticsManager.Instance;
-md.SetSampleInterval(0.25f); // adjust sampling rate
+MemoryDiagnosticsManager.Instance.SetSampleInterval(0.25f);
 ```
 
-## API (minimal)
+## API
 
 - `MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds)`
 - `MemoryDiagnosticsManager.SetSampleInterval(seconds)`
 - `MemoryDiagnosticsManager.OnSample(MemoryDiagSnapshot)`
+- `MemoryDiagnosticsOverlay.Show()`
 
-## Platform Details
+## Overlay Placement
 
-- iOS: `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
-- Android: `android.os.Debug.getPss()` (KB) converted to bytes.
-- macOS: native plugin (`libMemoryDiagnostics.dylib`) uses `task_info(..., TASK_VM_INFO)` → `phys_footprint`, fallback to resident size.
+`MemoryDiagnosticsOverlay` supports top‑left, top‑right, bottom‑left, and bottom‑right anchors. Configure `_anchor`, `_margin`, and `_size` in the inspector. Positions are safe‑area aware.
+
+## Platform Metrics
+
+- iOS/macOS: `task_info(..., TASK_VM_INFO)` → `phys_footprint` (resident fallback).
+- Android: `android.os.Debug.getPss()` (KB → bytes).
 - Windows: `GetProcessMemoryInfo(...).WorkingSetSize`.
-- Peak tracked locally per sample in managed code.
 
-### macOS native source
+## macOS Native Source
 
-- Source lives in `Native~/macOS/MemoryDiagnostics.mm`
-- Build script: `Scripts~/build_macos.sh`
-- The build script outputs a universal dylib (arm64 + x86_64).
-
-## Performance Notes
-
-- Exactly one native call per sampling tick (`MD_GetMemoryFootprintBytes`).
-- No disk I/O performed by this plugin.
-- No per-sample managed allocations inside the package.
+- Source: `Native~/macOS/MemoryDiagnostics.mm`
+- Build: `Scripts~/build_macos.sh` (universal arm64 + x86_64)
 
 ## License
 
