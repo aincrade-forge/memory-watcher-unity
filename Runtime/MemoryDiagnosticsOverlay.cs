@@ -24,10 +24,20 @@ namespace MemoryDiagnostics
 
         public static MemoryDiagnosticsOverlay Show()
         {
+            return Show(OverlayAnchor.TopLeft);
+        }
+
+        public static MemoryDiagnosticsOverlay Show(OverlayAnchor anchor)
+        {
             var existing = FindObjectOfType<MemoryDiagnosticsOverlay>();
-            if (existing != null) return existing;
+            if (existing != null)
+            {
+                existing._anchor = anchor;
+                return existing;
+            }
             var go = new GameObject("MemoryDiagnosticsOverlay");
             var overlay = go.AddComponent<MemoryDiagnosticsOverlay>();
+            overlay._anchor = anchor;
             DontDestroyOnLoad(go);
             return overlay;
         }
