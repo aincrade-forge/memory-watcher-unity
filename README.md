@@ -57,6 +57,8 @@ MemoryDiagnostics.Instance.SetSampleInterval(0.25f);
 Import the "Overlay" sample from the Package Manager to get `MemoryDiagnosticsOverlay` (safe‑area aware).
 
 ```csharp
+using Aincrad;
+
 MemoryDiagnosticsOverlay.Show();
 // or choose anchor in code
 MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight);
@@ -72,7 +74,7 @@ MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight
 
 ### Android Performance Note
 
-`Debug.getPss()` can be relatively heavy (it walks process memory stats). Avoid per-frame sampling; prefer a 1–5s interval for overlays and longer for background telemetry. If you only need occasional readings, use `MemoryDiagnostics.SampleOnce()` sparingly.
+`Debug.getPss()` can be relatively heavy (it walks process memory stats). Avoid per-frame sampling; prefer a 1–5s interval for overlays and longer for background telemetry. If you only need occasional readings, use `MemoryDiagnostics.SampleOnce()` sparingly (main thread recommended on Android).
 
 ## macOS Native Source
 

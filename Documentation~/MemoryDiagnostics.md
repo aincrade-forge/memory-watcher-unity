@@ -41,3 +41,5 @@ One‑shot sampling:
 ```csharp
 var snap = MemoryDiagnostics.SampleOnce();
 ```
+
+Note: On Android, call `SampleOnce()` from the Unity main thread.
