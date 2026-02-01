@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `Runtime/` contains the Unity C# runtime code (`MemoryDiagnosticsManager.cs`) and the asmdef.
+- `Runtime/` contains the Unity C# runtime code (`Sampler.cs`) and the asmdef.
 - `Plugins/iOS/` contains the iOS native plugin source (`MemoryDiagnostics.mm`).
 - `Plugins/macOS/` contains the built macOS dylib (`libMemoryDiagnostics.dylib`) used by Unity at runtime.
 - `Native/macOS/` contains macOS native source code kept out of Unity imports.

@@ -9,7 +9,7 @@ Add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.6.6"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.7.0"
   }
 }
 ```
@@ -19,8 +19,8 @@ Add to `Packages/manifest.json`:
 ```csharp
 using MemoryDiagnostics;
 
-MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 1.0f);
-MemoryDiagnosticsManager.Instance.OnSample += s =>
+Sampler.Initialize(sampleIntervalSeconds: 1.0f);
+Sampler.Instance.OnSample += s =>
 {
     // s.currentMemoryMB / s.peakMemoryMB
 };
@@ -29,15 +29,15 @@ MemoryDiagnosticsManager.Instance.OnSample += s =>
 ## Configuration
 
 ```csharp
-MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds: 0.5f);
-MemoryDiagnosticsManager.Instance.SetSampleInterval(0.25f);
+Sampler.Initialize(sampleIntervalSeconds: 0.5f);
+Sampler.Instance.SetSampleInterval(0.25f);
 ```
 
 ## API
 
-- `MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds)`
-- `MemoryDiagnosticsManager.SetSampleInterval(seconds)`
-- `MemoryDiagnosticsManager.OnSample(MemoryDiagSnapshot)`
+- `Sampler.Initialize(sampleIntervalSeconds)`
+- `Sampler.SetSampleInterval(seconds)`
+- `Sampler.OnSample(MemoryDiagSnapshot)`
 
 ## Optional Overlay (Sample)
 

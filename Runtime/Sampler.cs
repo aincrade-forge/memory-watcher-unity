@@ -26,12 +26,12 @@ namespace MemoryDiagnostics
         }
     }
 
-    public sealed class MemoryDiagnosticsManager
+    public sealed class Sampler
     {
         private float _sampleIntervalSeconds = 1.0f;
 
-        private static MemoryDiagnosticsManager _instance;
-        public static MemoryDiagnosticsManager Instance => _instance;
+        private static Sampler _instance;
+        public static Sampler Instance => _instance;
         public static bool IsInitialized => _instance != null;
 
         private static class Native
@@ -217,11 +217,11 @@ namespace MemoryDiagnostics
         private static float BytesToMB(long bytes) => (float)((double)bytes / (1024.0 * 1024.0));
         private static void SafeInvokeEvent(Action<MemoryDiagSnapshot> evt, MemoryDiagSnapshot snap) { try { evt?.Invoke(snap); } catch { } }
 
-        public static MemoryDiagnosticsManager Initialize(float? sampleIntervalSeconds = null)
+        public static Sampler Initialize(float? sampleIntervalSeconds = null)
         {
             if (_instance == null)
             {
-                _instance = new MemoryDiagnosticsManager();
+                _instance = new Sampler();
             }
             if (sampleIntervalSeconds.HasValue)
             {

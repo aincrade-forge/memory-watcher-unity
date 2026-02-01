@@ -58,13 +58,13 @@ namespace MemoryDiagnostics
 
         private void OnEnable()
         {
-            var md = MemoryDiagnosticsManager.Initialize();
+            var md = Sampler.Initialize();
             md.OnSample += OnSample;
         }
 
         private void OnDisable()
         {
-            var md = MemoryDiagnosticsManager.Instance;
+            var md = Sampler.Instance;
             if (md != null) md.OnSample -= OnSample;
         }
 
