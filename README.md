@@ -45,12 +45,21 @@ MemoryDiagnostics.Initialize(sampleIntervalSeconds: 0.5f);
 MemoryDiagnostics.Instance.SetSampleInterval(0.25f);
 ```
 
+Shutdown (optional):
+
+```csharp
+MemoryDiagnostics.Shutdown();
+```
+
+Optional: call `Shutdown()` only to stop sampling mid‑session; app close cleans up automatically (Android also frees the cached JNI ref).
+
 ## API
 
 - `MemoryDiagnostics.Initialize(sampleIntervalSeconds)`
 - `MemoryDiagnostics.SetSampleInterval(seconds)`
 - `MemoryDiagnostics.OnSample(MemoryDiagSnapshot)`
 - `MemoryDiagnostics.SampleOnce()`
+- `MemoryDiagnostics.Shutdown()`
 
 ## Optional Overlay (Sample)
 

@@ -43,3 +43,11 @@ var snap = MemoryDiagnostics.SampleOnce();
 ```
 
 Note: On Android, call `SampleOnce()` from the Unity main thread.
+
+Optional shutdown:
+
+```csharp
+MemoryDiagnostics.Shutdown();
+```
+
+Optional: call `Shutdown()` only to stop sampling mid‑session; app close cleans up automatically (Android also frees the cached JNI ref).
