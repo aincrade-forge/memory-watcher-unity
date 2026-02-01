@@ -9,7 +9,7 @@ Add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.7.0"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.7.1"
   }
 }
 ```
@@ -26,6 +26,12 @@ Sampler.Instance.OnSample += s =>
 };
 ```
 
+One‑shot (no PlayerLoop):
+
+```csharp
+var snap = Sampler.SampleOnce();
+```
+
 ## Configuration
 
 ```csharp
@@ -38,6 +44,7 @@ Sampler.Instance.SetSampleInterval(0.25f);
 - `Sampler.Initialize(sampleIntervalSeconds)`
 - `Sampler.SetSampleInterval(seconds)`
 - `Sampler.OnSample(MemoryDiagSnapshot)`
+- `Sampler.SampleOnce()`
 
 ## Optional Overlay (Sample)
 

@@ -187,12 +187,7 @@ namespace MemoryDiagnostics
             if (Time.unscaledTime < _nextSampleTime) return;
             _nextSampleTime = Time.unscaledTime + _sampleIntervalSeconds;
 
-            long currentBytes = 0;
-            try
-            {
-                currentBytes = Native.MD_GetMemoryFootprintBytes();
-            }
-            catch { currentBytes = 0; }
+            var currentBytes = ReadCurrentBytes();
 
             CurrentMemoryBytes = currentBytes;
             if (currentBytes > PeakMemoryBytes) PeakMemoryBytes = currentBytes;
@@ -205,7 +200,7 @@ namespace MemoryDiagnostics
             SafeInvokeEvent(OnSample, snap);
         }
 
-        private MemoryDiagSnapshot BuildSnapshot(long currentBytes, float currentMB, long peakBytes)
+        private static MemoryDiagSnapshot BuildSnapshot(long currentBytes, float currentMB, long peakBytes)
         {
             return new MemoryDiagSnapshot(
                 currentBytes,
@@ -216,6 +211,23 @@ namespace MemoryDiagnostics
 
         private static float BytesToMB(long bytes) => (float)((double)bytes / (1024.0 * 1024.0));
         private static void SafeInvokeEvent(Action<MemoryDiagSnapshot> evt, MemoryDiagSnapshot snap) { try { evt?.Invoke(snap); } catch { } }
+        private static long ReadCurrentBytes()
+        {
+            long currentBytes = 0;
+            try
+            {
+                currentBytes = Native.MD_GetMemoryFootprintBytes();
+            }
+            catch { currentBytes = 0; }
+            return currentBytes;
+        }
+
+        public static MemoryDiagSnapshot SampleOnce()
+        {
+            var currentBytes = ReadCurrentBytes();
+            var currentMB = BytesToMB(currentBytes);
+            return new MemoryDiagSnapshot(currentBytes, currentBytes, currentMB, currentMB);
+        }
 
         public static Sampler Initialize(float? sampleIntervalSeconds = null)
         {

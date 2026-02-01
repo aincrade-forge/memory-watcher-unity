@@ -33,3 +33,9 @@ Sampler.Initialize(sampleIntervalSeconds: 0.5f);
 var md = Sampler.Instance;
 md.SetSampleInterval(0.25f);
 ```
+
+One‑shot sampling:
+
+```csharp
+var snap = Sampler.SampleOnce();
+```
