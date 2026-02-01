@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MemoryDiagnostics
+namespace Aincrad
 {
     public sealed class MemoryDiagnosticsOverlay : MonoBehaviour
     {
@@ -58,13 +58,13 @@ namespace MemoryDiagnostics
 
         private void OnEnable()
         {
-            var md = Sampler.Initialize();
+            var md = MemoryDiagnostics.Initialize();
             md.OnSample += OnSample;
         }
 
         private void OnDisable()
         {
-            var md = Sampler.Instance;
+            var md = MemoryDiagnostics.Instance;
             if (md != null) md.OnSample -= OnSample;
         }
 

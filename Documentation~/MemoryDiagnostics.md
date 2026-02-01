@@ -4,8 +4,8 @@ Event-driven iOS memory telemetry with minimal overhead. This document mirrors R
 
 ## Quick Start
 - Install via UPM (git tag or local path)
-- Call `Sampler.Initialize(...)` early (e.g., BeforeSceneLoad)
-- Subscribe to `Sampler.Instance` events
+- Call `MemoryDiagnostics.Initialize(...)` early (e.g., BeforeSceneLoad)
+- Subscribe to `MemoryDiagnostics.Instance` events
 
 ## Key Events
 - `OnSessionStart`, `OnSample`, `OnLowMemoryWarning`, `OnAppStateChanged`, `OnSessionEnd`
@@ -26,16 +26,18 @@ Event-driven iOS memory telemetry with minimal overhead. This document mirrors R
 Single entrypoint API:
 
 ```csharp
+using Aincrad;
+
 // Programmatic: before instance exists
-Sampler.Initialize(sampleIntervalSeconds: 0.5f);
+MemoryDiagnostics.Initialize(sampleIntervalSeconds: 0.5f);
 
 // After instance exists
-var md = Sampler.Instance;
+var md = MemoryDiagnostics.Instance;
 md.SetSampleInterval(0.25f);
 ```
 
 One‑shot sampling:
 
 ```csharp
-var snap = Sampler.SampleOnce();
+var snap = MemoryDiagnostics.SampleOnce();
 ```

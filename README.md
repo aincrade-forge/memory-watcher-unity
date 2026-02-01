@@ -9,7 +9,7 @@ Add to `Packages/manifest.json`:
 ```json
 {
   "dependencies": {
-    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.7.1"
+    "com.aincrade.memory-watcher": "https://github.com/aincrade-forge/memory-watcher-unity.git#v0.8.0"
   }
 }
 ```
@@ -17,34 +17,40 @@ Add to `Packages/manifest.json`:
 ## Usage
 
 ```csharp
-using MemoryDiagnostics;
+using Aincrad;
 
-Sampler.Initialize(sampleIntervalSeconds: 1.0f);
-Sampler.Instance.OnSample += s =>
+MemoryDiagnostics.Initialize(sampleIntervalSeconds: 1.0f);
+MemoryDiagnostics.Instance.OnSample += s =>
 {
     // s.currentMemoryMB / s.peakMemoryMB
 };
 ```
 
+Fully qualified if you prefer:
+
+```csharp
+Aincrad.MemoryDiagnostics.Initialize(sampleIntervalSeconds: 1.0f);
+```
+
 One‑shot (no PlayerLoop):
 
 ```csharp
-var snap = Sampler.SampleOnce();
+var snap = MemoryDiagnostics.SampleOnce();
 ```
 
 ## Configuration
 
 ```csharp
-Sampler.Initialize(sampleIntervalSeconds: 0.5f);
-Sampler.Instance.SetSampleInterval(0.25f);
+MemoryDiagnostics.Initialize(sampleIntervalSeconds: 0.5f);
+MemoryDiagnostics.Instance.SetSampleInterval(0.25f);
 ```
 
 ## API
 
-- `Sampler.Initialize(sampleIntervalSeconds)`
-- `Sampler.SetSampleInterval(seconds)`
-- `Sampler.OnSample(MemoryDiagSnapshot)`
-- `Sampler.SampleOnce()`
+- `MemoryDiagnostics.Initialize(sampleIntervalSeconds)`
+- `MemoryDiagnostics.SetSampleInterval(seconds)`
+- `MemoryDiagnostics.OnSample(MemoryDiagSnapshot)`
+- `MemoryDiagnostics.SampleOnce()`
 
 ## Optional Overlay (Sample)
 
@@ -66,7 +72,7 @@ MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight
 
 ### Android Performance Note
 
-`Debug.getPss()` can be relatively heavy (it walks process memory stats). Avoid per-frame sampling; prefer a 1–5s interval for overlays and longer for background telemetry. If you only need occasional readings, use `Sampler.SampleOnce()` sparingly.
+`Debug.getPss()` can be relatively heavy (it walks process memory stats). Avoid per-frame sampling; prefer a 1–5s interval for overlays and longer for background telemetry. If you only need occasional readings, use `MemoryDiagnostics.SampleOnce()` sparingly.
 
 ## macOS Native Source
 

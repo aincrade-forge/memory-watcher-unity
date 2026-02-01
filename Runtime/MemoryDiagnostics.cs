@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.PlayerLoop;
 
-namespace MemoryDiagnostics
+namespace Aincrad
 {
     public readonly struct MemoryDiagSnapshot
     {
@@ -26,12 +26,12 @@ namespace MemoryDiagnostics
         }
     }
 
-    public sealed class Sampler
+    public sealed class MemoryDiagnostics
     {
         private float _sampleIntervalSeconds = 1.0f;
 
-        private static Sampler _instance;
-        public static Sampler Instance => _instance;
+        private static MemoryDiagnostics _instance;
+        public static MemoryDiagnostics Instance => _instance;
         public static bool IsInitialized => _instance != null;
 
         private static class Native
@@ -229,11 +229,11 @@ namespace MemoryDiagnostics
             return new MemoryDiagSnapshot(currentBytes, currentBytes, currentMB, currentMB);
         }
 
-        public static Sampler Initialize(float? sampleIntervalSeconds = null)
+        public static MemoryDiagnostics Initialize(float? sampleIntervalSeconds = null)
         {
             if (_instance == null)
             {
-                _instance = new Sampler();
+                _instance = new MemoryDiagnostics();
             }
             if (sampleIntervalSeconds.HasValue)
             {
