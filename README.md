@@ -24,11 +24,6 @@ MemoryDiagnosticsManager.Instance.OnSample += s =>
 {
     // s.currentMemoryMB / s.peakMemoryMB
 };
-
-// Optional overlay (safe‑area aware)
-MemoryDiagnosticsOverlay.Show();
-// or choose anchor in code
-MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight);
 ```
 
 ## Configuration
@@ -43,10 +38,16 @@ MemoryDiagnosticsManager.Instance.SetSampleInterval(0.25f);
 - `MemoryDiagnosticsManager.Initialize(sampleIntervalSeconds)`
 - `MemoryDiagnosticsManager.SetSampleInterval(seconds)`
 - `MemoryDiagnosticsManager.OnSample(MemoryDiagSnapshot)`
-- `MemoryDiagnosticsOverlay.Show()`
-- `MemoryDiagnosticsOverlay.Show(anchor)`
 
-## Overlay Placement
+## Optional Overlay (Sample)
+
+Import the "Overlay" sample from the Package Manager to get `MemoryDiagnosticsOverlay` (safe‑area aware).
+
+```csharp
+MemoryDiagnosticsOverlay.Show();
+// or choose anchor in code
+MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight);
+```
 
 `MemoryDiagnosticsOverlay` supports top‑left, top‑right, bottom‑left, and bottom‑right anchors. Configure `_anchor`, `_margin`, and `_size` in the inspector, or pass an anchor to `Show(anchor)`. Positions are safe‑area aware.
 
