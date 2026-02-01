@@ -29,7 +29,7 @@ namespace MemoryDiagnostics
 
         public static MemoryDiagnosticsOverlay Show(OverlayAnchor anchor)
         {
-            var existing = FindObjectOfType<MemoryDiagnosticsOverlay>();
+            var existing = FindExisting();
             if (existing != null)
             {
                 existing._anchor = anchor;
@@ -42,6 +42,15 @@ namespace MemoryDiagnostics
             return overlay;
         }
 
+        private static MemoryDiagnosticsOverlay FindExisting()
+        {
+            #if UNITY_2023_1_OR_NEWER
+            return FindFirstObjectByType<MemoryDiagnosticsOverlay>();
+            #else
+            return FindObjectOfType<MemoryDiagnosticsOverlay>();
+            #endif
+        }
+
         private void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -51,7 +60,6 @@ namespace MemoryDiagnostics
         {
             var md = MemoryDiagnosticsManager.Initialize();
             md.OnSample += OnSample;
-            EnsureStyle();
         }
 
         private void OnDisable()
