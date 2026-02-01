@@ -64,6 +64,10 @@ MemoryDiagnosticsOverlay.Show(MemoryDiagnosticsOverlay.OverlayAnchor.BottomRight
 - Android: `android.os.Debug.getPss()` (KB → bytes).
 - Windows: `GetProcessMemoryInfo(...).WorkingSetSize`.
 
+### Android Performance Note
+
+`Debug.getPss()` can be relatively heavy (it walks process memory stats). Avoid per-frame sampling; prefer a 1–5s interval for overlays and longer for background telemetry. If you only need occasional readings, use `Sampler.SampleOnce()` sparingly.
+
 ## macOS Native Source
 
 - Source: `Native~/macOS/MemoryDiagnostics.mm`
